@@ -1,17 +1,39 @@
-// Update this page (the content is just a fallback if you fail and example)
-// Use chakra-ui
-import { Container, Text, VStack } from "@chakra-ui/react";
-
-// Example of using react-icons
-// import { FaRocket } from "react-icons/fa";
-// <IconButton aria-label="Add" icon={<FaRocket />} size="lg" />; // IconButton would also have to be imported from chakra
+import { Container, VStack, Heading, Box, Button, Input, Image, SimpleGrid } from "@chakra-ui/react";
+import { useState } from "react";
+import { FaUpload } from "react-icons/fa";
 
 const Index = () => {
+  const [images, setImages] = useState([]);
+  const [selectedImage, setSelectedImage] = useState(null);
+
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImages([...images, reader.result]);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
-    <Container centerContent maxW="container.md" height="100vh" display="flex" flexDirection="column" justifyContent="center" alignItems="center">
-      <VStack spacing={4}>
-        <Text fontSize="2xl">Your Blank Canvas</Text>
-        <Text>Chat with the agent to start making edits.</Text>
+    <Container centerContent maxW="container.md" py={10}>
+      <VStack spacing={6} width="100%">
+        <Heading as="h1" size="xl">Photo Sharing Platform</Heading>
+        <Box width="100%" textAlign="center">
+          <Input type="file" accept="image/*" onChange={handleImageUpload} display="none" id="upload-input" />
+          <Button as="label" htmlFor="upload-input" leftIcon={<FaUpload />} colorScheme="teal">
+            Upload Photo
+          </Button>
+        </Box>
+        <SimpleGrid columns={[1, 2, 3]} spacing={4} width="100%">
+          {images.map((src, index) => (
+            <Box key={index} borderWidth="1px" borderRadius="lg" overflow="hidden">
+              <Image src={src} alt={`Uploaded ${index}`} />
+            </Box>
+          ))}
+        </SimpleGrid>
       </VStack>
     </Container>
   );
